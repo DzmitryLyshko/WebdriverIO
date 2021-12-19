@@ -6,14 +6,16 @@ const YopmailPage = require('../../lib/yopmail_page');
 const yopmailPage = new YopmailPage();
 
 describe('pricing calculator page scenarios', function () {
-  searchQuery = 'Google Cloud Platform Pricing Calculator';
-  savedRecievedBill = '';
-  savedActualEstimatedCost = '';
+  const searchQuery = 'Google Cloud Platform Pricing Calculator';
+  let emailAdress;
+  let savedRecievedBill;
+  let savedActualEstimatedCost;
+  const regexpGetPriceInDollarsFromText = /\bUSD\s\d*\,\d*\.\d*/;
 
   before(async function () {
     await pricingCalculatorPage.open();
     await pricingCalculatorPage.maximizeWindow();
-    await pricingCalculatorPage.enterSearchQuery();
+    await pricingCalculatorPage.enterSearchQuery(searchQuery);
     await pricingCalculatorPage.choosePricingCalculator();
     await pricingCalculatorPage.confirmCookies();
     await pricingCalculatorPage.switchToIFrame();
@@ -35,7 +37,7 @@ describe('pricing calculator page scenarios', function () {
     await pricingCalculatorPage.switchToNewTab();
     await yopmailPage.acceptCookies();
     await yopmailPage.generateRandomEmail();
-    const emailAdress = await yopmailPage.getGeneratedEmail();
+    emailAdress = await yopmailPage.getGeneratedEmail();
     await browser.switchWindow('Google Cloud Pricing Calculator');
     await pricingCalculatorPage.switchToIFrame();
     await pricingCalculatorPage.clickEmailEstimateBtn();
@@ -50,8 +52,8 @@ describe('pricing calculator page scenarios', function () {
   });
 
   it('Verify that Total Estimated Monthly Cost in the letter equals to the cost in the calculator', async function () {
-    const estimatedCost = String(savedActualEstimatedCost.match(/\bUSD\s\d*\,\d*\.\d*/));
-    const recievedBill = String(savedRecievedBill.match(/\bUSD\s\d*\,\d*\.\d*/));
+    const estimatedCost = String(savedActualEstimatedCost.match(regexpGetPriceInDollarsFromText));
+    const recievedBill = String(savedRecievedBill.match(regexpGetPriceInDollarsFromText));
     expect(estimatedCost).to.equal(recievedBill);
   });
 

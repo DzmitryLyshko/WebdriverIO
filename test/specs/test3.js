@@ -4,12 +4,12 @@ const PricingCalculatorPage = require('../../lib/pricing_calculator_page');
 const pricingCalculatorPage = new PricingCalculatorPage();
 
 describe('pricing calculator page scenarios', function () {
-  searchQuery = 'Google Cloud Platform Pricing Calculator';
+  const searchQuery = 'Google Cloud Platform Pricing Calculator';
 
   before(async function () {
     await pricingCalculatorPage.open();
     await pricingCalculatorPage.maximizeWindow();
-    await pricingCalculatorPage.enterSearchQuery();
+    await pricingCalculatorPage.enterSearchQuery(searchQuery);
     await pricingCalculatorPage.choosePricingCalculator();
     await pricingCalculatorPage.confirmCookies();
     await pricingCalculatorPage.switchToIFrame();
